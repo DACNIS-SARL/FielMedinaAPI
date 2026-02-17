@@ -133,6 +133,10 @@ class RegisterForm(FlowbiteFormMixin, forms.ModelForm):
             },
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["email"].required = True
+
     def clean(self):
         data = super().clean()
         p1, p2 = data.get("password1"), data.get("password2")
