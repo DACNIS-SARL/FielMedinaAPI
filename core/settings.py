@@ -1,5 +1,6 @@
 from pathlib import Path
 import environ
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -195,8 +196,12 @@ DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL")
 # Path to Firebase service account JSON file (for server-side push notifications)
 GOOGLE_APPLICATION_CREDENTIALS = env(
     "GOOGLE_APPLICATION_CREDENTIALS",
-    default=str(BASE_DIR / "fielmedinasousse-firebase-adminsdk-fbsvc-32939c9c5a.json"),
+    default=str(BASE_DIR / "fielmedinasousse-firebase-adminsdk-fbsvc-8f2da79831.json"),
 )
+
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+
 
 # FCM Django Settings (for server-side push notifications)
 FCM_DJANGO_SETTINGS = {
@@ -211,11 +216,19 @@ FCM_DJANGO_SETTINGS = {
 # These values are used by client-side apps (iOS/Android/Web) to connect to Firebase
 # You can expose these via your API/GraphQL if needed
 FIREBASE_CLIENT_CONFIG = {
-    "apiKey": env("FIREBASE_API_KEY", default="AIzaSyC7ddaaSc5fo_o8vqShhyf2D9e5fCXJvso"),
-    "authDomain": env("FIREBASE_AUTH_DOMAIN", default="fielmedinasousse.firebaseapp.com"),
+    "apiKey": env(
+        "FIREBASE_API_KEY", default="AIzaSyC7ddaaSc5fo_o8vqShhyf2D9e5fCXJvso"
+    ),
+    "authDomain": env(
+        "FIREBASE_AUTH_DOMAIN", default="fielmedinasousse.firebaseapp.com"
+    ),
     "projectId": env("FIREBASE_PROJECT_ID", default="fielmedinasousse"),
-    "storageBucket": env("FIREBASE_STORAGE_BUCKET", default="fielmedinasousse.firebasestorage.app"),
+    "storageBucket": env(
+        "FIREBASE_STORAGE_BUCKET", default="fielmedinasousse.firebasestorage.app"
+    ),
     "messagingSenderId": env("FIREBASE_MESSAGING_SENDER_ID", default="797838304877"),
-    "appId": env("FIREBASE_APP_ID", default="1:797838304877:web:e586351927c5dd38954164"),
+    "appId": env(
+        "FIREBASE_APP_ID", default="1:797838304877:web:e586351927c5dd38954164"
+    ),
     "measurementId": env("FIREBASE_MEASUREMENT_ID", default="G-KMEWT7N3ND"),
 }

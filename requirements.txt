@@ -12,3 +12,4 @@ psycopg[binary]
 requests
 groq
 fcm-django
+firebase-admin
