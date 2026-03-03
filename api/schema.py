@@ -799,6 +799,7 @@ class Mutation:
         type: str,  # 'android' or 'ios'
         name: Optional[str] = None,
         user_uid: Optional[uuid.UUID] = None,
+        language: Optional[str] = None,
     ) -> RegisterDevicePayload:
         """
         Register an FCM device token for push notifications.
@@ -808,9 +809,11 @@ class Mutation:
             type: Device type - 'android' or 'ios'
             name: Optional device name/identifier
             user_uid: Optional user UUID to associate device with user
+            language: Device language code (e.g., 'en', 'fr'). Defaults to 'en' if unsupported.
         """
         try:
             from fcm_django.models import FCMDevice
+            from guard.notifications import SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE
 
             # Validate device type
             if type not in ["android", "ios", "web"]:
@@ -819,12 +822,19 @@ class Mutation:
                     message=f"Invalid device type: {type}. Must be 'android', 'ios', or 'web'",
                 )
 
+            # Normalize language: fallback to default if unsupported
+            normalized_language = language if language in SUPPORTED_LANGUAGES else DEFAULT_LANGUAGE
+
+            # Build device name with language prefix for grouping
+            # Format: "lang:en|Device Name" — allows querying by language
+            device_label = f"lang:{normalized_language}|{name or f'{type} device'}"
+
             # Get or create device
             device, created = FCMDevice.objects.get_or_create(
                 registration_id=registration_id,
                 defaults={
                     "type": type,
-                    "name": name or f"{type} device",
+                    "name": device_label,
                     "active": True,
                 },
             )
@@ -833,17 +843,13 @@ class Mutation:
             if not created:
                 device.type = type
                 device.active = True
-                if name:
-                    device.name = name
+                device.name = device_label
                 device.save()
 
             # Optionally associate with user if user_uid provided
             if user_uid:
                 try:
                     user_pref = UserPreference.objects.get(user_uid=user_uid)
-                    # Note: FCMDevice.user is a ForeignKey to User model
-                    # If you want to associate with UserPreference, you'd need to adjust this
-                    # For now, we just store the registration_id
                     pass
                 except UserPreference.DoesNotExist:
                     pass

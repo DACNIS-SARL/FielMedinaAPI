@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # This should point to your Firebase service account JSON file
 FIREBASE_CREDENTIALS_PATH = os.environ.get(
     "GOOGLE_APPLICATION_CREDENTIALS",
-    str(BASE_DIR / "fielmedinasousse-firebase-adminsdk-fbsvc-32939c9c5a.json")
+    str(BASE_DIR / "fielmedinasousse-firebase-adminsdk-fbsvc-8f2da79831.json")
 )
 
 # Initialize Firebase Admin SDK only if not already initialized

@@ -64,7 +64,7 @@ def filter_cities(sender, items, **kwargs):
 # Import models and notification service at the end to avoid circular imports
 def register_notification_signals():
     """Register signals for sending push notifications"""
-    from guard.models import Location, Event, Hiking
+    from guard.models import Location, Event, Hiking, Tip
     from guard.notifications import NotificationService
 
     @receiver(post_save, sender=Location)
@@ -97,6 +97,17 @@ def register_notification_signals():
             except Exception as e:
                 logger.error(f"Error in hiking_created signal: {e}", exc_info=True)
 
+    @receiver(post_save, sender=Tip)
+    def tip_created(sender, instance, created, **kwargs):
+        """Send notification when a new tip is created"""
+        if created:
+            try:
+                logger.info(f"Sending notification for new tip: {instance.id}")
+                NotificationService.send_new_tip_notification(instance)
+            except Exception as e:
+                logger.error(f"Error in tip_created signal: {e}", exc_info=True)
+
 
 # Register notification signals
 register_notification_signals()
+
