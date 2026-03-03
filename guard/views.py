@@ -676,7 +676,7 @@ class TipDeleteView(
     success_message = _("Tip deleted successfully")
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
+        messages.warning(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
 
     def test_func(self):
@@ -822,7 +822,7 @@ class HikingDeleteView(
     success_message = _("Hiking deleted successfully")
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
+        messages.warning(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
 
     def test_func(self):
@@ -966,7 +966,7 @@ class AdDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         return super().get_queryset().filter(client=self.request.user.profile)
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
+        messages.warning(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
 
 
@@ -1016,7 +1016,7 @@ class PartnerDeleteView(
     success_message = _("Partner deleted successfully.")
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
+        messages.warning(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
 
     def test_func(self):
@@ -1069,7 +1069,7 @@ class SponsorDeleteView(
     success_message = _("Sponsor deleted successfully.")
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, self.success_message)
+        messages.warning(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
 
     def test_func(self):
