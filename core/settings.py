@@ -1,6 +1,7 @@
 from pathlib import Path
 import environ
-import os
+from firebase_admin import initialize_app
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -192,19 +193,13 @@ SHORT_IO_DOMAIN = env("SHORT_IO_DOMAIN")
 SHORT_IO_FOLDER_ID = env("SHORT_IO_FOLDER_ID")
 DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL")
 
-GOOGLE_APPLICATION_CREDENTIALS = env(
-    "GOOGLE_APPLICATION_CREDENTIALS",
-    default=str(BASE_DIR / "fielmedinasousse-firebase-adminsdk-fbsvc-8f2da79831.json"),
-)
+FIREBASE_APP = initialize_app()
 
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
-
+GOOGLE_APPLICATION_CREDENTIALS = env("GOOGLE_APPLICATION_CREDENTIALS")
 
 FCM_DJANGO_SETTINGS = {
-    "FCM_SERVER_KEY": env("FCM_SERVER_KEY", default=None),
+    "APP_VERBOSE_NAME": "FielMedina",
     "ONE_DEVICE_PER_USER": False,
     "DELETE_INACTIVE_DEVICES": False,
     "UPDATE_ON_DUPLICATE_REG_ID": True,
-    "APP_VERBOSE_NAME": "FielMedina",
 }
