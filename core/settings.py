@@ -1,6 +1,6 @@
 from pathlib import Path
 import environ
-from firebase_admin import initialize_app
+from firebase_admin import initialize_app, credentials
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -193,9 +193,11 @@ SHORT_IO_DOMAIN = env("SHORT_IO_DOMAIN")
 SHORT_IO_FOLDER_ID = env("SHORT_IO_FOLDER_ID")
 DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL")
 
-FIREBASE_APP = initialize_app()
 
+# Firebase conf 
 GOOGLE_APPLICATION_CREDENTIALS = env("GOOGLE_APPLICATION_CREDENTIALS")
+cred = credentials.Certificate(f"{GOOGLE_APPLICATION_CREDENTIALS}")
+FIREBASE_APP = initialize_app(cred)
 
 FCM_DJANGO_SETTINGS = {
     "APP_VERBOSE_NAME": "FielMedina",
