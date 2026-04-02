@@ -1,11 +1,16 @@
 from pathlib import Path
+import base64
+import json
+import os
 import environ
 from firebase_admin import initialize_app, credentials
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
-env.read_env(env_file=str(BASE_DIR / ".env"))
+_env_file = BASE_DIR / ".env"
+if _env_file.is_file():
+    env.read_env(env_file=str(_env_file))
 
 SECRET_KEY = env("SECRET_KEY")
 
@@ -34,6 +39,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -156,11 +162,11 @@ if DEBUG:
 
 else:
     SITE_URL = env("SITE_URL")
-    CORS_ALLOWED_ORIGINS = [
+    CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[
         "https://fielmedina.com",
         "https://www.fielmedina.com",
-    ]
-    ALLOWED_HOSTS = ["mystory.fielmedina.com"]
+    ])
+    ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["mystory.fielmedina.com"])
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = env("EMAIL_HOST")
     EMAIL_PORT = env.int("EMAIL_PORT")
@@ -178,13 +184,18 @@ else:
             "PORT": env("DB_PORT"),
         }
     }
-    SECURE_SSL_REDIRECT = True
+    # SSL is handled by Coolify's Traefik reverse proxy
+    SECURE_SSL_REDIRECT = False
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 3600
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    STATIC_ROOT = BASE_DIR / "static"
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+    STATICFILES_DIRS = [
+        BASE_DIR / "static",
+    ]
 
 
 PUBLIC_GROQ_API_KEI = env("PUBLIC_GROQ_API_KEI")
@@ -194,10 +205,14 @@ SHORT_IO_FOLDER_ID = env("SHORT_IO_FOLDER_ID")
 DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 
-# Firebase conf 
-GOOGLE_APPLICATION_CREDENTIALS = str(BASE_DIR / "firebase/firebase-adminsdk.json")
-cred = credentials.Certificate(f"{GOOGLE_APPLICATION_CREDENTIALS}")
-FIREBASE_APP = initialize_app(cred)
+# Firebase conf — supports Base64 env var (for Docker/Coolify) with file fallback (for local dev)
+_firebase_b64 = os.environ.get("FIREBASE_CREDENTIALS_BASE64")
+if _firebase_b64:
+    _creds_dict = json.loads(base64.b64decode(_firebase_b64))
+    _cred = credentials.Certificate(_creds_dict)
+else:
+    _cred = credentials.Certificate(str(BASE_DIR / "firebase/firebase-adminsdk.json"))
+FIREBASE_APP = initialize_app(_cred)
 
 FCM_DJANGO_SETTINGS = {
     "APP_VERBOSE_NAME": "FielMedina",
@@ -217,6 +232,11 @@ LOGGING = {
         },
     },
     "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
         "file": {
             "level": "INFO",
             "class": "logging.FileHandler",
@@ -226,12 +246,12 @@ LOGGING = {
     },
     "loggers": {
         "django": {
-            "handlers": ["file"],
+            "handlers": ["console", "file"] if DEBUG else ["console"],
             "level": "INFO",
             "propagate": True,
         },
         "guard": {
-            "handlers": ["file"],
+            "handlers": ["console", "file"] if DEBUG else ["console"],
             "level": "DEBUG",
             "propagate": True,
         },

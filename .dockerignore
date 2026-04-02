@@ -1,0 +1,47 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+venv/
+.venv/
+
+# Node (rebuilt in Docker)
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# Local database
+db.sqlite3
+
+# Environment (injected via Coolify)
+.env
+
+# Logs
+*.log
+django_error.log
+
+# User uploads (mounted as persistent volume)
+upload/
+
+# macOS
+.DS_Store
+
+# Firebase credentials (injected via env var in production)
+firebase/
+
+# Static collected output (rebuilt in Docker)
+staticfiles/
+
+# Documentation
+*.md
+docs/
+
+# Apple auth key
+*.p8
