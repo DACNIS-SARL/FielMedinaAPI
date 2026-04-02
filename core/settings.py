@@ -181,24 +181,14 @@ else:
     if env("REDIS_URL", default=None):
         CACHES = {
             "default": {
-                "BACKEND": "django_redis.cache.RedisCache",
+                "BACKEND": "django.core.cache.backends.redis.RedisCache",
                 "LOCATION": env("REDIS_URL"),
-                "OPTIONS": {
-                    "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                    "SOCKET_CONNECT_TIMEOUT": 5,
-                    "SOCKET_TIMEOUT": 5,
-                    "RETRY_ON_TIMEOUT": True,
-                    "CONNECTION_POOL_CLASS_KWARGS": {
-                        "max_connections": 20,
-                    },
-                },
                 "KEY_PREFIX": "fielmedina",
                 "TIMEOUT": 300,
             }
         }
         SESSION_ENGINE = "django.contrib.sessions.backends.cache"
         SESSION_CACHE_ALIAS = "default"
-        DJANGO_REDIS_IGNORE_EXCEPTIONS = True
 
     # SSL is handled by Coolify's Traefik reverse proxy
     SECURE_SSL_REDIRECT = False

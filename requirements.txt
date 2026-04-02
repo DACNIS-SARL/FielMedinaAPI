@@ -15,4 +15,4 @@ fcm-django
 firebase-admin
 gunicorn
 whitenoise
-django-redis
+redis
