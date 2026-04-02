@@ -1,7 +1,8 @@
 import strawberry
 import strawberry_django
 from strawberry import auto
-from typing import List, Optional
+from typing import List, Optional, Any
+import typing
 import math
 from django.db.models import Q
 from django.utils import timezone
@@ -40,7 +41,7 @@ from shared.models import Page, UserPreference
 @strawberry.type
 class ImageFieldType:
     @strawberry.field
-    def url(self, info, root) -> str:
+    def url(self, info: strawberry.Info, root: typing.Any) -> str:
         if not root:
             return ""
         try:
@@ -49,15 +50,15 @@ class ImageFieldType:
             return root.url
 
     @strawberry.field
-    def name(self, root) -> str:
+    def name(self, root: typing.Any) -> str:
         return root.name if root else ""
 
     @strawberry.field
-    def path(self, root) -> str:
+    def path(self, root: typing.Any) -> str:
         return root.path if root and hasattr(root, "path") else ""
 
     @strawberry.field
-    def size(self, root) -> int:
+    def size(self, root: typing.Any) -> int:
         return root.size if root and hasattr(root, "size") else 0
 
     @strawberry.field
