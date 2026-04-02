@@ -100,8 +100,9 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
-MEDIA_URL = "upload/"
+# FIX: leading slash required for correct URL resolution in production
+STATIC_URL = "/static/"
+MEDIA_URL = "/upload/"
 MEDIA_ROOT = BASE_DIR / "upload"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -154,11 +155,9 @@ if DEBUG:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
     STATICFILES_DIRS = [
         BASE_DIR / "static",
     ]
-
 
 else:
     SITE_URL = env("SITE_URL")
@@ -177,8 +176,8 @@ else:
     DATABASES = {
         "default": env.db("DATABASE_URL")
     }
-    
-    # Configure Redis Cache if available
+
+    # Redis cache — optional, gracefully skipped if REDIS_URL not set
     if env("REDIS_URL", default=None):
         CACHES = {
             "default": {
@@ -194,7 +193,7 @@ else:
                     },
                 },
                 "KEY_PREFIX": "fielmedina",
-                "TIMEOUT": 300,  
+                "TIMEOUT": 300,
             }
         }
         SESSION_ENGINE = "django.contrib.sessions.backends.cache"
@@ -209,7 +208,10 @@ else:
     SECURE_HSTS_SECONDS = 3600
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+
+    # Static files — WhiteNoise compressed storage for production
     STATIC_ROOT = BASE_DIR / "staticfiles"
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     STATICFILES_DIRS = [
         BASE_DIR / "static",
     ]
@@ -222,7 +224,7 @@ SHORT_IO_FOLDER_ID = env("SHORT_IO_FOLDER_ID")
 DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 
-# Firebase conf — supports Base64 env var (for Docker/Coolify) with file fallback (for local dev)
+# Firebase — Base64 env var for Docker/Coolify, file fallback for local dev
 _firebase_b64 = os.environ.get("FIREBASE_CREDENTIALS_BASE64")
 if _firebase_b64:
     _creds_dict = json.loads(base64.b64decode(_firebase_b64))

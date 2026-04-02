@@ -18,7 +18,7 @@ db.sqlite3
 .env
 
 # Media
-upload/
+# upload/
 
 # Security keys
 *.pem
