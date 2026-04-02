@@ -216,6 +216,7 @@ else:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+    WHITENOISE_MANIFEST_STRICT = False
     STATICFILES_DIRS = [
         BASE_DIR / "static",
     ]
