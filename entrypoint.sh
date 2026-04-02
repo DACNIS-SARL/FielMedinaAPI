@@ -5,7 +5,7 @@ echo "==> Running database migrations..."
 python manage.py migrate --noinput
 
 echo "==> Collecting static files..."
-python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput -i input.css
 
 echo "==> Starting Gunicorn server..."
 exec gunicorn core.wsgi:application \
