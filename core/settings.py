@@ -194,8 +194,8 @@ SHORT_IO_FOLDER_ID = env("SHORT_IO_FOLDER_ID")
 DJANGO_ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 
-# Firebase conf
-GOOGLE_APPLICATION_CREDENTIALS = env("GOOGLE_APPLICATION_CREDENTIALS")
+# Firebase conf 
+GOOGLE_APPLICATION_CREDENTIALS = str(BASE_DIR / "firebase/firebase-adminsdk.json")
 cred = credentials.Certificate(f"{GOOGLE_APPLICATION_CREDENTIALS}")
 FIREBASE_APP = initialize_app(cred)
 
@@ -205,6 +205,7 @@ FCM_DJANGO_SETTINGS = {
     "DELETE_INACTIVE_DEVICES": False,
     "UPDATE_ON_DUPLICATE_REG_ID": True,
 }
+
 
 LOGGING = {
     "version": 1,
@@ -217,7 +218,7 @@ LOGGING = {
     },
     "handlers": {
         "file": {
-            "level": "ERROR",
+            "level": "INFO",
             "class": "logging.FileHandler",
             "filename": BASE_DIR / "django_error.log",
             "formatter": "verbose",
@@ -226,12 +227,12 @@ LOGGING = {
     "loggers": {
         "django": {
             "handlers": ["file"],
-            "level": "ERROR",
+            "level": "INFO",
             "propagate": True,
         },
         "guard": {
             "handlers": ["file"],
-            "level": "ERROR",
+            "level": "DEBUG",
             "propagate": True,
         },
     },
