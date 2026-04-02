@@ -6,7 +6,9 @@ WORKDIR /build
 COPY package.json package-lock.json ./
 RUN npm ci
 
-COPY static/input.css ./static/input.css
+# Copy ALL application code so Tailwind can scan the HTML/JS for class names
+COPY . .
+
 RUN npx @tailwindcss/cli -i ./static/input.css -o ./static/main.css --minify
 
 

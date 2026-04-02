@@ -211,7 +211,11 @@ else:
 
     # Static files — WhiteNoise compressed storage for production
     STATIC_ROOT = BASE_DIR / "staticfiles"
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
     STATICFILES_DIRS = [
         BASE_DIR / "static",
     ]
